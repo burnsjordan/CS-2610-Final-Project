@@ -7,6 +7,8 @@
 var app = require('../app');
 var debug = require('debug')('CS-2610-Final-Project:server');
 var http = require('http');
+const MongoClient = require('mongodb').MongoClient;
+var db;
 
 /**
  * Get port from environment and store in Express.
@@ -25,7 +27,11 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+ MongoClient.connect('mongodb://localhost:27017/noteStore', (err, database) => {
+   db = database;
+  server.listen(port);
+});
+
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -87,4 +93,5 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  console.log('Listening on ' + bind);
 }

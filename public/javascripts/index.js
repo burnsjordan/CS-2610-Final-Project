@@ -1,17 +1,20 @@
-var note = {
-    list: []
-};
-
 var preEdit = "";
 
 function getNotes() {
-    for (var i = 0; i < note.list.length; i++) {
+    /*for (var i = 0; i < note.list.length; i++) {
         $('#notes').append("<p>" + note.list[i] + "</p><a href='javascript:void(0)' id='del'>Delete     </a><a href='javascript:void(0)' id='edit'>Edit</a>");
-    }
+    }*/
 }
 
 function addNote(str) {
-    note.list.push(str);
+    $.post("../add",
+    {
+        name: note,
+        city: str
+    },
+    function(data, status){
+        alert("Data: " + data + "\nStatus: " + status);
+    });
     $('#notes').empty();
     getNotes();
     console.log("Add");
