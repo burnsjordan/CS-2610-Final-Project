@@ -1,58 +1,71 @@
-var preEdit = "";
+var preEdit = [];
 
-function getNotes() {
-    /*for (var i = 0; i < note.list.length; i++) {
-        $('#notes').append("<p>" + note.list[i] + "</p><a href='javascript:void(0)' id='del'>Delete     </a><a href='javascript:void(0)' id='edit'>Edit</a>");
-    }*/
-}
-
-function addNote(str) {
-    $.post("../add",
-    {
-        name: note,
-        city: str
-    },
-    function(data, status){
-        alert("Data: " + data + "\nStatus: " + status);
-    });
-    $('#notes').empty();
-    getNotes();
+function addNote(title, str) {
+    $.post("../add", {
+            title: title,
+            body: str
+        },
+        function(data, status) {
+            //alert("Data: " + data + "\nStatus: " + status);
+        });
+        window.location.reload(true);
     console.log("Add");
 }
 
-function editNote(str) {
-    var index = note.list.indexOf(preEdit);
-    console.log(preEdit);
-    console.log(note.list[index]);
-    if (index > -1) {
-        console.log("True");
-        note.list[index] = str;
-    }
-    console.log(note.list[index]);
-    $('#notes').empty();
-    getNotes();
+function editNote(title, newNote) {
+    fetch('notes', {
+            method: 'put',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'oldTitle' : preEdit.pop(),
+                'title': title,
+                'body': newNote
+            })
+        })
+        .then(res => {
+            if (res.ok) return res.json()
+        })
+        .then(data => {
+            console.log(data)
+            window.location.reload(true)
+        })
+    console.log("Edit");
 }
 
-function deleteNote(str) {
-    var index = note.list.indexOf(str);
-    if (index > -1) {
-        note.list.splice(index, 1);
-    }
-    $('#notes').empty();
-    getNotes();
+function deleteNote(title) {
+  fetch('notes', {
+          method: 'delete',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              'title': title,
+          })
+      })
+      .then(res => {
+          if (res.ok) return res.json()
+      })
+      .then(data => {
+          console.log(data)
+          window.location.reload(true)
+      })
+    window.location.reload(true);
     console.log("Delete");
 }
 
 function main() {
     $("#addForm").hide();
     $("#editForm").hide();
-    getNotes();
     $('#add').click(function() {
         $("#addForm").show();
         $(this).hide();
     });
     $('body').on('click', "#del", function() {
-        $(this).prev().addClass("delete");
+        $(".temp").remove();
+        $('.delete').removeClass('delete');
+        $(this).prev().prev().addClass("delete");
         $(this).parent().append("<p class='temp'>Are you sure?</p><a href='javascript:void(0)' id='y' class='temp'>Yes     </a><a href=javascript:void(0) id='n' class='temp'>No</a>");
     });
     $('body').on('click', "#y", function() {
@@ -64,19 +77,22 @@ function main() {
         console.log("No");
     });
     $('body').on('click', '#edit', function() {
-        preEdit = $(this).prev().prev().text();
+        preEdit = [];
+        preEdit.push($(this).prev().prev().prev().text());
         $("#editForm").show();
     });
     $("#addForm").submit(function(e) {
         var input = $('#addBox').val();
-        addNote(input);
+        var title = $('#titleAdd').val();
+        addNote(title, input);
         e.preventDefault();
         $(this).hide();
         $("#add").show();
     });
     $("#editForm").submit(function(e) {
         var input = $('#editBox').val();
-        editNote(input);
+        var title = $('#titleEdit').val();
+        editNote(title, input);
         e.preventDefault();
         $(this).hide();
     });

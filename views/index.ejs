@@ -17,8 +17,10 @@
     <ul class="notes">
         <% for(var i=0; i<notes.length; i++) {%>
             <li class="note">
-                <span><%= notes[i].title %></span>
-                <span><%= notes[i].body %></span>
+                <div class='t'><b><%= notes[i].title %></b></div>
+                <div class='b'><%= notes[i].body %></div>
+                <div id='del' class='d'>Delete</div>
+                <div id='edit' class='e'>Edit</div>
             </li>
             <% } %>
     </ul>
@@ -26,11 +28,13 @@
 
     <form id='addForm'>
         Type Note in the Text Field to Add<br>
-        <input type="text" name="Note Text" id='addBox'>
+        <input type='text' name='Title' id='titleAdd' />
+        <input type="text" name="Note Text" id='addBox' />
         <input type='submit' value='Add' />
     </form>
     <form id='editForm'>
         Type Note in the Text Field to Add<br>
+        <input type='text' name='Title' id='titleEdit' />
         <input type="text" name="Note Text" id='editBox'>
         <input type='submit' value='Edit' />
     </form>
